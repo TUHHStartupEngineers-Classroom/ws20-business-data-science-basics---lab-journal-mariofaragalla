@@ -91,7 +91,8 @@ therfore Bremen is the highest state
 ```{r plot, fig.width=10, fig.height=7}
 sales_by_state_tbl %>% ggplot(aes(x = state, y = sales , fill = sales)) + geom_col()
 ```
-
+### using years
+bike_orderlines_wrangled_tbl %>% select(location, order.date, total.price) %>%  mutate(year = year(order.date)) %>% group_by(location,year) %>% summarize(sales = sum(total.price))
 
 # My second post (note the order)
 
