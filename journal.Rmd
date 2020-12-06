@@ -20,19 +20,78 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 
 This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
 
-# My first post
+# Intro to the tidyverse
 
 Last compiled: `r Sys.Date()`
 
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
+## Steps
 
-## Second level header
+### Load Libraries
 
-You can add more headers by adding more hashtags. These won't be put into the table of contents
+```{r}
+library(tidyverse)
+library(readxl)
+library(lubridate)
+library(ggplot2)
 
-### third level header
+```
 
-Here's an even lower level header
+## Read tables
+```{r}
+bikes_tbl <- readxl:: read_excel(path = "DS_101/DS_101/00_data/01_bike_sales/01_raw_data/bikes.xlsx")
+orderlines_tbl <- readxl::read_excel("DS_101/DS_101/00_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+bikeshops_tbl  <- readxl::read_excel("DS_101/DS_101/00_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
+```
+## Joining data
+```{r}
+bike_orderlines_joined_tbl <- orderlines_tbl %>%
+        left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
+        left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
+```
+## Wrangling data
+```{r}
+bike_orderlines_joined_tbl %>% 
+  select(category) %>%
+  filter(str_detect(category, "^Mountain")) %>% 
+  unique()
+```  
+```{r}
+bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
+  
+  separate(col    = category,
+           into   = c("category.1", "category.2", "category.3"),
+           sep    = " - ") %>%
+  
+  mutate(total.price = price * quantity)
+```
+
+## Filtering and getting Business insights
+
+### Select Columns
+
+```{r}
+sales_by_loc_tbl <- bike_orderlines_wrangled_tbl %>% select(location, total.price) 
+sales_by_loc_tbl
+```
+
+### separate location into city & state and summarise sales
+
+```{r}
+sales_by_city_state_tbl <-sales_by_loc_tbl %>% separate(col=location , into=c("city","state"),sep=",",convert=T) %>% group_by(state,city) %>% summarise(sales = sum(total.price))
+```
+
+### Get highest sales state by sorting in descending order
+```{r}
+sales_by_state_tbl <-sales_by_city_state_tbl %>% select(state , sales)
+sales_by_state_tbl[order(-sales_by_state_tbl$sales),]
+```
+therfore Bremen is the highest state
+
+### Plotting state vs location
+```{r plot, fig.width=10, fig.height=7}
+sales_by_state_tbl %>% ggplot(aes(x = state, y = sales , fill = sales)) + geom_col()
+```
+
 
 # My second post (note the order)
 

@@ -412,16 +412,111 @@ div.tocify {
 
 <p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
 <p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
-<div id="my-first-post" class="section level1">
-<h1><span class="header-section-number">1</span> My first post</h1>
+<div id="intro-to-the-tidyverse" class="section level1">
+<h1><span class="header-section-number">1</span> Intro to the tidyverse</h1>
 <p>Last compiled: 2020-12-06</p>
-<p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
-<div id="second-level-header" class="section level2">
-<h2><span class="header-section-number">1.1</span> Second level header</h2>
-<p>You can add more headers by adding more hashtags. These won’t be put into the table of contents</p>
-<div id="third-level-header" class="section level3">
-<h3><span class="header-section-number">1.1.1</span> third level header</h3>
-<p>Here’s an even lower level header</p>
+<div id="steps" class="section level2">
+<h2><span class="header-section-number">1.1</span> Steps</h2>
+<div id="load-libraries" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> Load Libraries</h3>
+<pre class="r"><code>library(tidyverse)
+library(readxl)
+library(lubridate)</code></pre>
+</div>
+</div>
+<div id="read-tables" class="section level2">
+<h2><span class="header-section-number">1.2</span> Read tables</h2>
+<pre class="r"><code>bikes_tbl &lt;- readxl:: read_excel(path = &quot;DS_101/DS_101/00_data/01_bike_sales/01_raw_data/bikes.xlsx&quot;)
+orderlines_tbl &lt;- readxl::read_excel(&quot;DS_101/DS_101/00_data/01_bike_sales/01_raw_data/orderlines.xlsx&quot;)
+bikeshops_tbl  &lt;- readxl::read_excel(&quot;DS_101/DS_101/00_data/01_bike_sales/01_raw_data/bikeshops.xlsx&quot;)</code></pre>
+</div>
+<div id="joining-data" class="section level2">
+<h2><span class="header-section-number">1.3</span> Joining data</h2>
+<pre class="r"><code>bike_orderlines_joined_tbl &lt;- orderlines_tbl %&gt;%
+        left_join(bikes_tbl, by = c(&quot;product.id&quot; = &quot;bike.id&quot;)) %&gt;%
+        left_join(bikeshops_tbl, by = c(&quot;customer.id&quot; = &quot;bikeshop.id&quot;))</code></pre>
+</div>
+<div id="wrangling-data" class="section level2">
+<h2><span class="header-section-number">1.4</span> Wrangling data</h2>
+<pre class="r"><code>bike_orderlines_joined_tbl %&gt;% 
+  select(category) %&gt;%
+  filter(str_detect(category, &quot;^Mountain&quot;)) %&gt;% 
+  unique()</code></pre>
+<pre><code>## # A tibble: 10 x 1
+##    category                         
+##    &lt;chr&gt;                            
+##  1 Mountain - Trail - Spectral      
+##  2 Mountain - Trail - Neuron        
+##  3 Mountain - Dirt Jump - Stitched  
+##  4 Mountain - Enduro - Torque       
+##  5 Mountain - Trail - Grand Canyon  
+##  6 Mountain - Cross-Country - Lux   
+##  7 Mountain - Enduro - Strive       
+##  8 Mountain - Downhill - Sender     
+##  9 Mountain - Fat Bikes - Dude      
+## 10 Mountain - Cross-Country - Exceed</code></pre>
+<pre class="r"><code>bike_orderlines_wrangled_tbl &lt;- bike_orderlines_joined_tbl %&gt;%
+  
+  separate(col    = category,
+           into   = c(&quot;category.1&quot;, &quot;category.2&quot;, &quot;category.3&quot;),
+           sep    = &quot; - &quot;) %&gt;%
+  
+  mutate(total.price = price * quantity)</code></pre>
+</div>
+<div id="filtering-and-getting-business-insights" class="section level2">
+<h2><span class="header-section-number">1.5</span> Filtering and getting Business insights</h2>
+<div id="select-columns" class="section level3">
+<h3><span class="header-section-number">1.5.1</span> Select Columns</h3>
+<pre class="r"><code>sales_by_loc_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;% select(location, total.price) 
+sales_by_loc_tbl</code></pre>
+<pre><code>## # A tibble: 15,644 x 2
+##    location                     total.price
+##    &lt;chr&gt;                              &lt;dbl&gt;
+##  1 Hamburg, Hamburg                    3119
+##  2 Hamburg, Hamburg                    5359
+##  3 Bremen, Bremen                      2729
+##  4 Bremen, Bremen                      1749
+##  5 Stuttgart, Baden-Württemberg        1219
+##  6 Stuttgart, Baden-Württemberg        1359
+##  7 Stuttgart, Baden-Württemberg        2529
+##  8 Stuttgart, Baden-Württemberg        1559
+##  9 Stuttgart, Baden-Württemberg        3899
+## 10 Augsburg, Bavaria                   6629
+## # … with 15,634 more rows</code></pre>
+</div>
+<div id="separate-location-into-city-state-and-summarise-sales" class="section level3">
+<h3><span class="header-section-number">1.5.2</span> separate location into city &amp; state and summarise sales</h3>
+<pre class="r"><code>sales_by_loc_tbl %&gt;% separate(col=location , into=c(&quot;city&quot;,&quot;state&quot;),sep=&quot;,&quot;,convert=T) %&gt;% group_by(state,city) %&gt;% summarise(sales = sum(total.price))</code></pre>
+<pre><code>## # A tibble: 30 x 3
+## # Groups:   state [12]
+##    state                city          sales
+##    &lt;chr&gt;                &lt;chr&gt;         &lt;dbl&gt;
+##  1 &quot; Baden-Württemberg&quot; Freiburg    1444523
+##  2 &quot; Baden-Württemberg&quot; Karlsruhe   2035536
+##  3 &quot; Baden-Württemberg&quot; Mannheim    1865736
+##  4 &quot; Baden-Württemberg&quot; Stuttgart   1175295
+##  5 &quot; Bavaria&quot;           Augsburg    1911938
+##  6 &quot; Bavaria&quot;           Marienberg  3629885
+##  7 &quot; Bavaria&quot;           Munich      1200996
+##  8 &quot; Berlin&quot;            Berlin      1128433
+##  9 &quot; Bremen&quot;            Bremen     10653499
+## 10 &quot; Hamburg&quot;           Hamburg     3874756
+## # … with 20 more rows</code></pre>
+<pre class="r"><code>sales_by_loc_tbl</code></pre>
+<pre><code>## # A tibble: 15,644 x 2
+##    location                     total.price
+##    &lt;chr&gt;                              &lt;dbl&gt;
+##  1 Hamburg, Hamburg                    3119
+##  2 Hamburg, Hamburg                    5359
+##  3 Bremen, Bremen                      2729
+##  4 Bremen, Bremen                      1749
+##  5 Stuttgart, Baden-Württemberg        1219
+##  6 Stuttgart, Baden-Württemberg        1359
+##  7 Stuttgart, Baden-Württemberg        2529
+##  8 Stuttgart, Baden-Württemberg        1559
+##  9 Stuttgart, Baden-Württemberg        3899
+## 10 Augsburg, Bavaria                   6629
+## # … with 15,634 more rows</code></pre>
 </div>
 </div>
 </div>
@@ -436,7 +531,7 @@ div.tocify {
 <p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
 <pre class="r"><code>samples &lt;- rnorm(100, mean=0, sd=1)
 hist(samples)</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
 </div>
 
