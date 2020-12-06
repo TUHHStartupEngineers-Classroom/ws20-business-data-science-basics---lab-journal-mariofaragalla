@@ -1,6 +1,6 @@
 # Hi
 
-You will find my solution in jornal.Rmd
+You will find my solution in journal.Rmd
 
 # Lab Journal Website
 An R Markdown website template for a lab journal [https://tuhh-w11.github.io/lab_journal_website/](https://tuhh-w11.github.io/lab_journal_website/)
