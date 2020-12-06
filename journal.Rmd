@@ -93,11 +93,11 @@ sales_by_state_tbl %>% ggplot(aes(x = state, y = sales , fill = sales)) + geom_c
 ```
 ### using years
 ```{r}
-bike_orderlines_wrangled_tbl %>% select(location, order.date, total.price) %>%  mutate(year = year(order.date)) %>% group_by(location,year) %>% summarize(sales = sum(total.price))
+sales_by_state_year_tbl <- bike_orderlines_wrangled_tbl %>% select(location, order.date, total.price) %>%  mutate(year = year(order.date)) %>% group_by(location,year) %>% summarize(sales = sum(total.price))
 ```
 ### plotting
 ```{r}
-sales_by_state_tbl %>% ggplot(aes(x = state, y = years , fill = sales)) + geom_col()
+sales_by_state_year_tbl %>% ggplot(aes(x = state, y = year , fill = sales)) + geom_col()
 ```
 
 # My second post (note the order)
