@@ -519,7 +519,13 @@ sales_by_state_tbl[order(-sales_by_state_tbl$sales),]</code></pre>
 <h3><span class="header-section-number">1.5.5</span> plotting</h3>
 <pre class="r"><code>sales_by_state_year_tbl %&gt;% ggplot(aes(x = location, y = year , fill = sales)) + geom_col()</code></pre>
 <p><img src="journal_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>#Data Acquistion ##Libraries</p>
+</div>
+</div>
+</div>
+<div id="data-acquistion" class="section level1">
+<h1><span class="header-section-number">2</span> Data Acquistion</h1>
+<div id="libraries" class="section level2">
+<h2><span class="header-section-number">2.1</span> Libraries</h2>
 <pre class="r"><code>library(RSQLite)
 library(dplyr)
 library(httr)
@@ -532,7 +538,9 @@ library(purrr)
 library(xopen)
 library(stringi)
 library(tibble)</code></pre>
-<p>##TASK1_API_Get_Data</p>
+</div>
+<div id="task1_api_get_data" class="section level2">
+<h2><span class="header-section-number">2.2</span> TASK1_API_Get_Data</h2>
 <pre class="r"><code>url= &quot;https://api.coinpaprika.com/v1/coins/btc-bitcoin&quot;
 resp &lt;- GET(url)
 rawToChar(resp$content)</code></pre>
@@ -673,7 +681,9 @@ rawToChar(resp$content)</code></pre>
 ## 
 ## $last_data_at
 ## [1] &quot;2021-01-08T17:00:00Z&quot;</code></pre>
-<p>##TASK2_Collecting_Data_from_website</p>
+</div>
+<div id="task2_collecting_data_from_website" class="section level2">
+<h2><span class="header-section-number">2.3</span> TASK2_Collecting_Data_from_website</h2>
 <pre class="r"><code>get_bike_data &lt;- function(url) {
   
   html_bike_category &lt;- read_html(url)
@@ -695,7 +705,10 @@ bike_tableout</code></pre>
 ## 2     2 &quot;\nXTRA WATT EVO\n&quot;         &quot;\nab 2.899,00 €\n&quot;
 ## 3     3 &quot;\nXTRA WATT EVO X\n&quot;       &quot;\nab 3.399,00 €\n&quot;</code></pre>
 <pre class="r"><code>saveRDS(bike_tableout,&quot;Challenge_TASK2.rds&quot;)</code></pre>
-<p>#Data Wrangling</p>
+</div>
+</div>
+<div id="data-wrangling" class="section level1">
+<h1><span class="header-section-number">3</span> Data Wrangling</h1>
 <pre class="r"><code># Importing data: ---- 
 library(vroom)
 # Tidyverse
@@ -895,17 +908,15 @@ top10_worlwide_patents &lt;- combined_data_3  %&gt;%
 
 top10_worlwid_top5_upts_ &lt;- top10_worlwide_patents %&gt;% slice(1:5)  </code></pre>
 </div>
-</div>
-</div>
 <div id="data-visualization" class="section level1">
-<h1><span class="header-section-number">2</span> Data visualization:</h1>
+<h1><span class="header-section-number">4</span> Data visualization:</h1>
 <div id="task-description" class="section level2">
-<h2><span class="header-section-number">2.1</span> Task description</h2>
+<h2><span class="header-section-number">4.1</span> Task description</h2>
 <p>Challenge 1 Goal: Map the time course of the cumulative Covid-19 cases!</p>
 <p>Challenge 2 Goal: Visualize the distribution of the mortality rate (deaths / population)</p>
 </div>
 <div id="solution" class="section level2">
-<h2><span class="header-section-number">2.2</span> Solution</h2>
+<h2><span class="header-section-number">4.2</span> Solution</h2>
 <pre class="r"><code>#Import required Libraries
 
 library(scales)

@@ -100,8 +100,10 @@ sales_by_state_year_tbl <- bike_orderlines_wrangled_tbl %>% select(location, ord
 sales_by_state_year_tbl %>% ggplot(aes(x = location, y = year , fill = sales)) + geom_col()
 ```
 
-#Data Acquistion
-##Libraries
+# Data Acquistion
+
+## Libraries
+
 ```{r}
 library(RSQLite)
 library(dplyr)
@@ -119,7 +121,7 @@ library(tibble)
 
 ```
 
-##TASK1_API_Get_Data
+## TASK1_API_Get_Data
 ```{r}
 url= "https://api.coinpaprika.com/v1/coins/btc-bitcoin"
 resp <- GET(url)
@@ -131,7 +133,7 @@ resp %>%
   fromJSON()
 ```
 
-##TASK2_Collecting_Data_from_website
+## TASK2_Collecting_Data_from_website
 ```{r}
 get_bike_data <- function(url) {
   
@@ -152,7 +154,8 @@ saveRDS(bike_tableout,"Challenge_TASK2.rds")
 ```
 
 
-#Data Wrangling
+# Data Wrangling
+
 ```{r}
 
 # Importing data: ---- 
