@@ -1,6 +1,8 @@
-# Hi
+# Final update
 
-You will find my solution in journal.Rmd
+You will find the final solution in journal.Rmd
+
+Thank you for extending my deadline.
 
 # Lab Journal Website
 An R Markdown website template for a lab journal [https://tuhh-w11.github.io/lab_journal_website/](https://tuhh-w11.github.io/lab_journal_website/)
